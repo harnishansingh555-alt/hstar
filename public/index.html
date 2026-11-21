@@ -406,7 +406,7 @@ const closeDrawer = () => $("app").classList.remove("open");
 function openChat(id) {
   const c = chats.find((x) => x.id === id);
   if (!c || busy) return;
-  stopLive(); if (canSpeak) speechSynthesis.cancel();
+  stopLive(); stopSpeak();
   activeId = id; history = c.messages.map((m) => ({ ...m }));
   log.innerHTML = "";
   history.forEach((m) => add(m.shown || m.content, m.role === "user" ? "user" : "bot"));
@@ -532,7 +532,7 @@ function actButton(icon, key, el) {
       b.parentNode.querySelectorAll('[aria-pressed]').forEach((x) => x.setAttribute("aria-pressed", "false"));
       b.setAttribute("aria-pressed", String(on));
     }
-    else if (icon === "speak") { if (!canSpeak) return; if (speechSynthesis.speaking) speechSynthesis.cancel(); else say(el._text || el.textContent, true); }
+    else if (icon === "speak") { if (isSpeaking()) stopSpeak(); else say(el._text || el.textContent, true); }
     else if (icon === "regen") regenerate();
   };
   return b;
@@ -695,14 +695,66 @@ function refreshVoiceLabels() {
 function speakable(t) {
   return String(t).replace(/```[\s\S]*?```/g, " ").replace(/[`*_#>]/g, "").replace(/^\s*[-•]\s+/gm, "").replace(/\s+/g, " ").trim();
 }
+// ---- Speaking: a natural human voice from the server first; the browser's own voice is the backup. ----
+const SP = { token: 0, audio: null, on: false, serverOk: true };
+function stopSpeak() {
+  SP.token++; SP.on = false;
+  if (SP.audio) { try { SP.audio.pause(); } catch (e) {} SP.audio = null; }
+  if (canSpeak) speechSynthesis.cancel();
+}
+const isSpeaking = () => SP.on || (canSpeak && speechSynthesis.speaking);
+function splitForVoice(clean) {
+  const chunks = [];
+  for (const piece of clean.match(/[^.!?\u0964]+[.!?\u0964]*\s*/g) || [clean]) {
+    if (chunks.length && chunks[chunks.length - 1].length + piece.length < 240) chunks[chunks.length - 1] += piece;
+    else chunks.push(piece);
+  }
+  return chunks;
+}
+async function fetchVoice(text) {
+  const r = await fetch("api/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+  if (!r.ok) throw new Error("tts " + r.status);
+  return URL.createObjectURL(await r.blob());
+}
 // Speaks the text and resolves when finished. force=true speaks even when "Voice replies" is off (live mode).
-function say(text, force = false) {
+async function say(text, force = false) {
+  if (!speakOn && !force) return;
+  stopSpeak();
+  const clean = speakable(text);
+  if (!clean) return;
+  const my = SP.token;
+  if (SP.serverOk) {
+    const chunks = splitForVoice(clean);
+    SP.on = true;
+    try {
+      let next = fetchVoice(chunks[0]);
+      for (let i = 0; i < chunks.length; i++) {
+        const url = await next;
+        if (my !== SP.token) { URL.revokeObjectURL(url); return; }
+        next = i + 1 < chunks.length ? fetchVoice(chunks[i + 1]) : null; // get the next piece while this one plays
+        if (next) next.catch(() => {});
+        await new Promise((ok, bad) => {
+          const a = new Audio(url); SP.audio = a;
+          a.onended = ok; a.onerror = () => bad(new Error("play"));
+          a.play().catch(bad);
+        });
+        URL.revokeObjectURL(url);
+        if (my !== SP.token) return;
+      }
+      if (my === SP.token) SP.on = false;
+      return;
+    } catch (e) {
+      if (my !== SP.token) return;
+      SP.on = false;
+      if (/tts 5(01|02)|tts 4/.test(String(e.message))) SP.serverOk = false; // no voice on the server: use the browser voice from now on
+    }
+  }
+  return browserSay(clean, my);
+}
+function browserSay(clean, my) {
   return new Promise((resolve) => {
-    if ((!speakOn && !force) || !canSpeak) return resolve();
+    if (!canSpeak) return resolve();
     speechSynthesis.cancel();
-    const clean = speakable(text);
-    if (!clean) return resolve();
-    // Pick the voice by the language of the text itself: Gurmukhi -> Punjabi, Latin text in an Indian/non-Latin UI language -> English, else the chosen language.
     const gur = /[\u0A00-\u0A7F]/.test(clean);
     const sl = PAI.speechLang(), base = sl.split("-")[0].toLowerCase();
     const NONLATIN = ["pa", "hi", "bn", "te", "mr", "ta", "ur", "gu", "kn", "ml", "or", "as", "ne", "sa", "sd", "ar", "he", "fa", "zh", "ja", "ko", "th", "ru", "uk", "el", "bg", "sr", "mk", "hy", "ka", "am", "my", "km", "si", "mn", "kk", "ky", "tg"];
@@ -733,7 +785,7 @@ function say(text, force = false) {
 function toggleMic() {
   if (!SR) { add(T[lang].noMic, "err"); return; }
   if (listening) { rec.stop(); return; }
-  if (canSpeak) speechSynthesis.cancel();
+  stopSpeak();
   rec = new SR();
   rec.lang = PAI.speechLang();
   rec.interimResults = true;
@@ -760,7 +812,7 @@ function toggleMic() {
 // ---------- chat ----------
 function newChat() {
   if (busy) return;
-  stopLive(); if (canSpeak) speechSynthesis.cancel();
+  stopLive(); stopSpeak();
   history = []; activeId = null; log.innerHTML = "";
   renderChips(); syncWelcome(); renderList(); closeDrawer();
 }
@@ -792,7 +844,7 @@ async function send(text, opts = {}) {
     if (m) return sendImage(m[1]);
     if (imageMode) return sendImage(text);
   }
-  if (canSpeak) speechSynthesis.cancel();
+  stopSpeak();
   // Text files go inside the message; pictures and PDFs travel as attachments.
   const fileText = files.filter((f) => f.kind === "text").map((f) => `\n\n[File: ${f.name}]\n${f.text}`).join("");
   const att = files.filter((f) => f.kind !== "text").map((f) => ({ mime: f.mime, data: f.data }));
@@ -825,7 +877,6 @@ async function respond(opts = {}, undo = () => {}) {
   busy = true; setBusy(true);
   stick = true;
   const wait = typingIndicator();
-  const t0 = performance.now(); let tFirst = 0;
   const ctl = (abortCtl = new AbortController());
   let bubble = null, full = "", raf = 0;
   const paint = () => { raf = 0; if (bubble) { bubble.innerHTML = renderMd(full); bubble._text = full; toBottom(); } };
@@ -858,7 +909,6 @@ async function respond(opts = {}, undo = () => {}) {
           if (ev.error) failed = ev.error;
           if (ev.d) {
             full += ev.d;
-            if (!tFirst) tFirst = performance.now();
             if (!bubble) { wait.remove(); bubble = add("", "bot", { stream: true }); }
             if (!raf) raf = requestAnimationFrame(paint);
           }
@@ -866,18 +916,7 @@ async function respond(opts = {}, undo = () => {}) {
       }
       if (raf) cancelAnimationFrame(raf);
       wait.remove();
-      if (bubble) {
-        paint(); finishBot(bubble);
-        // Speed of this answer: time to first word, total time, words per second.
-        const tEnd = performance.now(), sec = (tEnd - t0) / 1000, words = full.trim().split(/\s+/).length;
-        const gen = Math.max((tEnd - (tFirst || t0)) / 1000, 0.05);
-        const acts = bubble.parentNode && bubble.parentNode.querySelector(".acts");
-        if (acts && !opts.live) {
-          const sp = document.createElement("span"); sp.className = "spd";
-          sp.textContent = "\u26A1 " + ((tFirst - t0) / 1000).toFixed(1) + "s first word \u00B7 " + sec.toFixed(1) + "s total \u00B7 " + (words / gen).toFixed(0) + " words/s";
-          sp.title = "AI speed"; acts.appendChild(sp);
-        }
-      }
+      if (bubble) { paint(); finishBot(bubble); }
       if (!full.trim()) throw new Error(failed || "Request failed");
     }
     history.push({ role: "assistant", content: full });
@@ -909,7 +948,7 @@ function regenerate() {
   const prev = history.pop();
   const rows = [...log.querySelectorAll(".row.bot")].filter((r) => r.querySelector(".acts"));
   const old = rows[rows.length - 1]; if (old) old.remove();
-  if (canSpeak) speechSynthesis.cancel();
+  stopSpeak();
   respond({}, () => { history.push(prev); finishBot(add(prev.content, "bot")); });
 }
 
@@ -1066,14 +1105,14 @@ function startLive() {
   if (listening && rec) { try { rec.abort(); } catch (e) {} }
   liveOn = true; liveFails = 0;
   $("live").hidden = false;
-  if (canSpeak) speechSynthesis.cancel();
+  stopSpeak();
   liveListen();
 }
 function stopLive() {
   liveOn = false;
   const r = liveRec; liveRec = null;
   try { r && r.abort(); } catch (e) {}
-  if (canSpeak) speechSynthesis.cancel();
+  stopSpeak();
   $("live").hidden = true;
 }
 function liveListen() {
@@ -1156,11 +1195,11 @@ $("installBtn").addEventListener("click", async () => {
   installEvt = null; $("installBtn").hidden = true;
 });
 $("lend").addEventListener("click", stopLive);
-$("orb").addEventListener("click", () => { if ($("live").dataset.state === "speaking" && canSpeak) speechSynthesis.cancel(); });
+$("orb").addEventListener("click", () => { if ($("live").dataset.state === "speaking") stopSpeak(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && liveOn) stopLive(); });
 $("voiceOut").addEventListener("click", () => {
   speakOn = !speakOn;
-  if (!speakOn && canSpeak) speechSynthesis.cancel();
+  if (!speakOn) stopSpeak();
   refreshVoiceLabels();
 });
 

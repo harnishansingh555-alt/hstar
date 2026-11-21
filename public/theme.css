@@ -28,6 +28,4 @@ img[src="/logo.svg"],.brand img,.wlogo,.card img.logo{border-radius:50%}
 .bar .thmbtn{border:0;background:transparent;margin-left:auto}
 .bar .thmbtn+.gearlink{margin-left:0}
 .top{align-items:center;gap:10px}
-/* speed note under an answer */
-.spd{margin-left:auto;align-self:center;font-size:.78rem;color:var(--muted);padding:0 8px;white-space:nowrap}
 :root[data-theme="dark"] .gmsg{color:#FFB4A9}
