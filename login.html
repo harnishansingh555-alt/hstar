@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta property="og:site_name" content="hstar">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>hstar | Free multilingual chat in 140+ languages, image maker, free API key</title>
+<meta name="description" content="hstar is a free AI chatbot that talks in 140+ languages. Create images from text and get a free API key for your own website or app.">
+<meta name="theme-color" content="#FAF9F5">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"hstar","alternateName":["hstar","hstar Chatbot"],"url":"https://hstar.chat/","inLanguage":["en","pa","hi","bn","te","mr","ta","ur","gu","kn","ml","or","as"],"description":"hstar is a free AI chatbot that talks in 140+ languages. Create images from text and get a free API key for your own website or app."}</script>
+<meta property="og:title" content="hstar | Free multilingual chat in 140+ languages, image maker, free API key">
+<meta property="og:description" content="hstar is a free AI chatbot that talks in 140+ languages. Create images from text and get a free API key for your own website or app.">
+<link rel="canonical" href="https://hstar.chat/login">
+<meta property="og:image" content="https://hstar.chat/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hstar.chat/og-image.png">
+<link rel="icon" type="image/png" sizes="144x144" href="/favicon-144.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Noto+Sans+Gurmukhi:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="/theme-color.js"></script>
+<style>
+html,body{background:#17120F!important}
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative;overflow-x:hidden;font-family:"Bricolage Grotesque","Noto Sans Gurmukhi","Noto Sans Devanagari",system-ui,-apple-system,"Segoe UI",sans-serif}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(60vmax 40vmax at 15% 0%,rgba(var(--a1-rgb),.55),transparent 60%),radial-gradient(50vmax 40vmax at 90% 100%,rgba(var(--a2-rgb),.28),transparent 60%),radial-gradient(40vmax 30vmax at 50% 50%,rgba(60,40,32,.9),transparent 80%)}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.07;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:22px 22px}
+.top,.wrap,.pagelinks,.aboutline{position:relative;z-index:1}
+.top{display:flex;justify-content:flex-end;padding:16px clamp(16px,4vw,36px)}
+.wrap{flex:1;display:grid;place-items:center;width:100%;padding:8px 16px 28px}
+.card{background:#fff;border:1px solid rgba(255,255,255,.6);border-radius:30px;box-shadow:0 30px 80px rgba(0,0,0,.45);padding:clamp(26px,5vw,44px);width:100%;max-width:440px;position:relative;overflow:hidden;text-align:center;animation:rise .6s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--a1),var(--a2))}
+.card img.logo{width:58px;height:58px;border-radius:50%;box-shadow:0 6px 18px rgba(var(--a1-rgb),.3)}
+h1{margin:14px 0 6px;font-size:1.6rem;line-height:1.2;letter-spacing:-.015em}
+.sub{margin:0 0 20px;color:var(--muted);font-size:.98rem}
+label{display:block;text-align:left;font-weight:600;font-size:.9rem;margin:0 0 6px}
+input.f{width:100%;font:inherit;font-size:1rem;padding:14px 16px;border:1.5px solid #D9D5C7;border-radius:14px;background:#fff;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+input.f:focus{outline:none;border-color:var(--a1);box-shadow:0 0 0 4px rgba(var(--a1-rgb),.16)}
+input.f.bad{border-color:#C0392B;box-shadow:0 0 0 4px rgba(192,57,43,.12)}
+.card .cta{width:100%;margin-top:14px;padding:14px 22px;border-radius:14px;font-size:1rem;position:relative}
+.cta[disabled]{opacity:.7;cursor:not-allowed;transform:none;box-shadow:none}
+.cta.busy{color:transparent!important}
+.cta.busy::after{content:"";position:absolute;width:20px;height:20px;border:3px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.86rem;margin:18px 0}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+#gbtn{display:flex;justify-content:center;min-height:44px}
+.gmsg{display:block;text-align:center;line-height:1.4}
+.err{color:#8A1C10;background:#FBE9E7;border-radius:12px;padding:10px 14px;margin:14px 0 0;font-size:.92rem;text-align:left}
+.ok{color:#1E5B47;background:#E6F3EE;border-radius:12px;padding:10px 14px;margin:0 0 16px;font-size:.92rem;text-align:left;overflow-wrap:anywhere}
+.sugg{margin:8px 0 0;font-size:.9rem;text-align:left;color:var(--muted)}
+.sugg button{font:inherit;font-weight:700;background:none;border:0;color:var(--a1);cursor:pointer;padding:0;text-decoration:underline}
+[hidden]{display:none!important}
+.otp{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(6px,2vw,10px);direction:ltr}
+.otp input{width:100%;min-width:0;aspect-ratio:1/1.12;text-align:center;font:inherit;font-size:1.6rem;font-weight:800;border:1.5px solid #D9D5C7;border-radius:12px;background:#fff;color:var(--ink);padding:0;transition:border-color .15s,box-shadow .15s}
+.otp input:focus{outline:none;border-color:var(--a1);box-shadow:0 0 0 4px rgba(var(--a1-rgb),.16)}
+.otp input.bad{border-color:#C0392B}
+.otp.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.tip{margin:12px 0 0;font-size:.85rem;color:var(--muted);text-align:left}
+.row{display:flex;justify-content:space-between;gap:10px;margin-top:14px;font-size:.92rem;flex-wrap:wrap}
+.linkbtn{font:inherit;background:none;border:0;color:var(--a1d);font-weight:600;cursor:pointer;padding:6px 0;text-decoration:underline}
+.linkbtn[disabled]{color:var(--muted);text-decoration:none;cursor:default}
+.small{margin:18px 0 0;font-size:.82rem;color:var(--muted)}
+.small a{color:inherit;font-weight:600}
+.pagelinks{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 18px;padding:0 16px 8px}.pagelinks a{color:rgba(255,255,255,.72);font-weight:600;font-size:.95rem;text-decoration:none;padding:10px 4px}.pagelinks a:hover{color:#fff;text-decoration:underline}
+.aboutline{max-width:520px;margin:0 auto;padding:0 20px calc(26px + env(safe-area-inset-bottom));text-align:center;color:rgba(255,255,255,.55);font-size:.9rem}
+@media (prefers-reduced-motion:reduce){.card{animation:none}}
+</style>
+<link rel="stylesheet" href="/responsive.css">
+<link rel="stylesheet" href="/theme.css">
+<script src="/theme.js"></script>
+</head>
+<body>
+<div class="top">
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="en" aria-pressed="true">English</button>
+    <button type="button" data-lang="pa" aria-pressed="false">ਪੰਜਾਬੀ</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <main class="card">
+    <img class="logo" src="/logo.svg?v=2" alt="hstar">
+    <h1 data-t="title">Sign in to hstar</h1>
+    <p class="sub" data-t="sub">Use Google, or get a 6-digit code on your email. No password needed.</p>
+
+    <div id="gbtn"></div>
+    <div class="or" data-t="orEmail">or continue with email</div>
+
+    <form id="emailForm" novalidate>
+      <label for="email" data-t="emailL">Email address</label>
+      <input class="f" id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="you@example.com" required>
+      <div class="sugg" id="sugg" hidden><span data-t="didYou">Did you mean</span> <button type="button" id="suggBtn"></button>?</div>
+      <button class="cta" id="sendBtn" type="submit" data-t="send">Send me a code</button>
+    </form>
+
+    <form id="codeForm" novalidate hidden>
+      <div class="ok" id="sentMsg" role="status" aria-live="polite"></div>
+      <label for="d0" data-t="codeL">6-digit code</label>
+      <div class="otp" id="otp">
+        <input id="d0" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="1">
+        <input inputmode="numeric" maxlength="1" aria-label="2">
+        <input inputmode="numeric" maxlength="1" aria-label="3">
+        <input inputmode="numeric" maxlength="1" aria-label="4">
+        <input inputmode="numeric" maxlength="1" aria-label="5">
+        <input inputmode="numeric" maxlength="1" aria-label="6">
+      </div>
+      <button class="cta" id="verifyBtn" type="submit" data-t="verify">Verify and continue</button>
+      <p class="tip" data-t="spam">Can’t see the email? Check your spam folder.</p>
+      <div class="row">
+        <button class="linkbtn" id="resendBtn" type="button" data-t="resend">Send a new code</button>
+        <button class="linkbtn" id="changeBtn" type="button" data-t="change">Use a different email</button>
+      </div>
+    </form>
+
+    <div class="err" id="err" role="alert" hidden></div>
+
+    <p class="small"><span data-t="agree">By continuing you agree to our</span> <a href="terms.html" data-t="terms">Terms</a> &amp; <a href="privacy.html" data-t="privacy">Privacy</a>.</p>
+    <p class="small" style="margin-top:6px"><span data-t="credit">hstar is created by Panj Studio.</span></p>
+  </main>
+</div>
+
+<nav class="pagelinks" aria-label="Pages"><a href="features.html" data-t="nFeatures">Features</a><a href="help.html" data-t="nHelp">How to use</a><a href="about.html" data-t="nAbout">About</a><a href="faq.html" data-t="nFaq">FAQ</a><a href="contact.html" data-t="nContact">Contact</a></nav>
+<p class="aboutline" data-t="aboutLine">hstar is a free AI chatbot in many languages. It also creates images from text and gives you a free API key.</p>
+<script src="auth.js"></script>
+<script>
+const T = {
+  en: { brandH: "Ask anything,<br>in <em>any language.</em>", brandP: "Free AI chat in 140+ languages, with image creation and a free API key for your own app.", f1: "Free to use", f2: "No password to remember", f3: "Chats stay in your browser",
+        aboutLine: "hstar is a free AI chatbot in many languages. It also creates images from text and gives you a free API key.", nHome: "Home", nFeatures: "Features", nHelp: "How to use", nAbout: "About", nFaq: "FAQ", nContact: "Contact",
+        title: "Sign in to hstar", sub: "Use Google, or get a 6-digit code on your email. No password needed.", orEmail: "or continue with email", emailL: "Email address", didYou: "Did you mean", send: "Send me a code", codeL: "6-digit code", verify: "Verify and continue", spam: "Can’t see the email? Check your spam folder.", resend: "Send a new code", change: "Use a different email", agree: "By continuing you agree to our", terms: "Terms", privacy: "Privacy", credit: "hstar is created by Panj Studio.",
+        sent: "We sent a code to ", wait: "New code in ", sending: "Sending...", checking: "Checking...", bad: "Enter a valid email address.", badCode: "Enter the 6-digit code.", net: "Could not reach the server. Check your internet and try again." },
+  pa: { brandH: "ਕਿਸੇ ਵੀ ਭਾਸ਼ਾ ਵਿੱਚ<br><em>ਕੁਝ ਵੀ ਪੁੱਛੋ।</em>", brandP: "140+ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ ਮੁਫ਼ਤ AI ਚੈਟ, ਤਸਵੀਰਾਂ ਬਣਾਉਣਾ ਅਤੇ ਤੁਹਾਡੀ ਆਪਣੀ ਐਪ ਲਈ ਮੁਫ਼ਤ API ਕੁੰਜੀ।", f1: "ਵਰਤੋਂ ਮੁਫ਼ਤ", f2: "ਪਾਸਵਰਡ ਯਾਦ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ", f3: "ਚੈਟਾਂ ਤੁਹਾਡੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਰਹਿੰਦੀਆਂ ਹਨ",
+        aboutLine: "hstar ਕਈ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ ਗੱਲ ਕਰਨ ਵਾਲਾ ਮੁਫ਼ਤ AI ਚੈਟਬੋਟ ਹੈ। ਇਹ ਲਿਖਤ ਤੋਂ ਤਸਵੀਰਾਂ ਵੀ ਬਣਾਉਂਦਾ ਹੈ ਅਤੇ ਮੁਫ਼ਤ API key ਦਿੰਦਾ ਹੈ।", nHome: "ਮੁੱਖ ਪੰਨਾ", nFeatures: "ਖ਼ੂਬੀਆਂ", nHelp: "ਵਰਤੋਂ ਕਿਵੇਂ ਕਰੀਏ", nAbout: "ਸਾਡੇ ਬਾਰੇ", nFaq: "ਸਵਾਲ-ਜਵਾਬ", nContact: "ਸੰਪਰਕ",
+        title: "hstar ਵਿੱਚ ਸਾਈਨ ਇਨ ਕਰੋ", sub: "Google ਵਰਤੋ, ਜਾਂ ਆਪਣੀ ਈਮੇਲ ਉੱਤੇ 6 ਅੰਕਾਂ ਦਾ ਕੋਡ ਲਓ। ਪਾਸਵਰਡ ਦੀ ਲੋੜ ਨਹੀਂ।", orEmail: "ਜਾਂ ਈਮੇਲ ਨਾਲ ਅੱਗੇ ਵਧੋ", emailL: "ਈਮੇਲ ਪਤਾ", didYou: "ਕੀ ਤੁਹਾਡਾ ਮਤਲਬ ਹੈ", send: "ਮੈਨੂੰ ਕੋਡ ਭੇਜੋ", codeL: "6 ਅੰਕਾਂ ਦਾ ਕੋਡ", verify: "ਪੁਸ਼ਟੀ ਕਰੋ ਅਤੇ ਅੱਗੇ ਵਧੋ", spam: "ਈਮੇਲ ਨਹੀਂ ਦਿਸ ਰਹੀ? ਸਪੈਮ ਫੋਲਡਰ ਵੇਖੋ।", resend: "ਨਵਾਂ ਕੋਡ ਭੇਜੋ", change: "ਹੋਰ ਈਮੇਲ ਵਰਤੋ", agree: "ਅੱਗੇ ਵਧ ਕੇ ਤੁਸੀਂ ਸਾਡੀਆਂ", terms: "ਸ਼ਰਤਾਂ", privacy: "ਗੋਪਨੀਯਤਾ", credit: "hstar ਨੂੰ ਪੰਜ ਸਟੂਡੀਓ ਨੇ ਬਣਾਇਆ ਹੈ।",
+        sent: "ਅਸੀਂ ਕੋਡ ਭੇਜਿਆ ਹੈ: ", wait: "ਨਵਾਂ ਕੋਡ: ", sending: "ਭੇਜ ਰਹੇ ਹਾਂ...", checking: "ਜਾਂਚ ਰਹੇ ਹਾਂ...", bad: "ਸਹੀ ਈਮੇਲ ਪਤਾ ਲਿਖੋ।", badCode: "6 ਅੰਕਾਂ ਦਾ ਕੋਡ ਲਿਖੋ।", net: "ਸਰਵਰ ਨਹੀਂ ਮਿਲਿਆ। ਇੰਟਰਨੈੱਟ ਜਾਂਚੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।" }
+};
+const $ = (id) => document.getElementById(id);
+let lang = "en"; try { lang = localStorage.getItem("lang") === "pa" ? "pa" : "en"; } catch (e) {}
+const next = (() => { const n = new URLSearchParams(location.search).get("next") || "/"; return /^[a-z0-9-]+\.html$/i.test(n) ? n : "/"; })();
+let email = "", timer = null, busy = false;
+const done = () => location.replace(next);
+const showErr = (m) => { $("err").textContent = m; $("err").hidden = false; };
+const clearErr = () => { $("err").hidden = true; document.querySelectorAll(".bad").forEach((x) => x.classList.remove("bad")); };
+const boxes = () => [...document.querySelectorAll("#otp input")];
+const codeVal = () => boxes().map((b) => b.value).join("");
+function busyBtn(btn, on, label) { btn.disabled = on; btn.classList.toggle("busy", on); if (!on && label) btn.textContent = label; }
+
+function setLang(l, save) {
+  lang = l; document.documentElement.lang = l === "pa" ? "pa" : "en";
+  document.querySelectorAll("[data-t]").forEach((el) => {
+    if (el.id === "resendBtn" && el.disabled) return;
+    const v = T[l][el.dataset.t]; if (v == null) return;
+    if (/<\w/.test(v)) el.innerHTML = v; else el.textContent = v;
+  });
+  document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === l)));
+  if (email) $("sentMsg").textContent = T[l].sent + email;
+  if (save) { try { localStorage.setItem("lang", l); } catch (e) {} drawGoogle(); }
+}
+document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang, true)));
+
+async function post(url, body) {
+  try {
+    const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const d = await r.json().catch(() => ({}));
+    return { ok: r.ok, d };
+  } catch (e) { return { ok: false, d: { error: T[lang].net } }; }
+}
+
+function cooldown(sec) {
+  clearInterval(timer);
+  const b = $("resendBtn"); b.disabled = true;
+  const tick = () => { if (sec <= 0) { clearInterval(timer); b.disabled = false; b.textContent = T[lang].resend; return; } b.textContent = T[lang].wait + sec + "s"; sec--; };
+  tick(); timer = setInterval(tick, 1000);
+}
+
+// Typo help for common mail domains.
+const FIX = { "gmial.com": "gmail.com", "gmai.com": "gmail.com", "gamil.com": "gmail.com", "gmail.con": "gmail.com", "gmail.co": "gmail.com", "gnail.com": "gmail.com", "gmaill.com": "gmail.com", "yahooo.com": "yahoo.com", "yaho.com": "yahoo.com", "yahoo.con": "yahoo.com", "hotmial.com": "hotmail.com", "hotmail.con": "hotmail.com", "outlok.com": "outlook.com", "outlook.con": "outlook.com" };
+function suggest() {
+  const v = $("email").value.trim().toLowerCase(), at = v.lastIndexOf("@");
+  const fix = at > 0 && FIX[v.slice(at + 1)];
+  $("sugg").hidden = !fix;
+  if (fix) { $("suggBtn").textContent = v.slice(0, at + 1) + fix; }
+}
+$("email").addEventListener("input", () => { clearErr(); suggest(); });
+$("email").addEventListener("blur", suggest);
+$("suggBtn").addEventListener("click", () => { $("email").value = $("suggBtn").textContent; $("sugg").hidden = true; $("email").focus(); });
+
+async function sendCode() {
+  if (busy) return;
+  clearErr();
+  const v = $("email").value.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { $("email").classList.add("bad"); $("email").focus(); return showErr(T[lang].bad); }
+  busy = true; busyBtn($("sendBtn"), true);
+  const { ok, d } = await post("api/auth/email/send", { email: v, lang });
+  busy = false; busyBtn($("sendBtn"), false);
+  if (!ok) { if (d.wait && email === v) cooldown(d.wait); return showErr(d.error || T[lang].net); }
+  email = v;
+  $("sentMsg").textContent = T[lang].sent + email;
+  $("emailForm").hidden = true; $("codeForm").hidden = false; $("sugg").hidden = true;
+  boxes().forEach((b) => (b.value = "")); boxes()[0].focus();
+  cooldown(60);
+}
+$("emailForm").addEventListener("submit", (e) => { e.preventDefault(); sendCode(); });
+$("resendBtn").addEventListener("click", () => { if (!$("resendBtn").disabled) { $("email").value = email; sendCode(); } });
+$("changeBtn").addEventListener("click", () => { clearErr(); clearInterval(timer); email = ""; $("codeForm").hidden = true; $("emailForm").hidden = false; $("email").focus(); });
+
+async function verify() {
+  if (busy) return;
+  clearErr();
+  const code = codeVal();
+  if (code.length !== 6) { showErr(T[lang].badCode); return boxes().find((b) => !b.value)?.focus(); }
+  busy = true; busyBtn($("verifyBtn"), true);
+  const { ok, d } = await post("api/auth/email/verify", { email, code });
+  if (ok) return done();
+  busy = false; busyBtn($("verifyBtn"), false);
+  showErr(d.error || T[lang].net);
+  boxes().forEach((b) => b.classList.add("bad"));
+  $("otp").classList.remove("shake"); void $("otp").offsetWidth; $("otp").classList.add("shake");
+  boxes().forEach((b) => (b.value = "")); boxes()[0].focus();
+}
+$("codeForm").addEventListener("submit", (e) => { e.preventDefault(); verify(); });
+
+// Six code boxes: type, delete, arrow keys, paste, and one-tap autofill from SMS/email all work.
+boxes().forEach((b, i, all) => {
+  b.addEventListener("input", () => {
+    clearErr();
+    const d = b.value.replace(/\D/g, "");
+    if (d.length > 1) { fill(d, i); return; }       // autofill or fast typing put several digits in one box
+    b.value = d;
+    if (d && all[i + 1]) all[i + 1].focus();
+    if (codeVal().length === 6) verify();
+  });
+  b.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace" && !b.value && all[i - 1]) { all[i - 1].value = ""; all[i - 1].focus(); e.preventDefault(); }
+    else if (e.key === "ArrowLeft" && all[i - 1]) { all[i - 1].focus(); e.preventDefault(); }
+    else if (e.key === "ArrowRight" && all[i + 1]) { all[i + 1].focus(); e.preventDefault(); }
+  });
+  b.addEventListener("paste", (e) => { e.preventDefault(); fill((e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, ""), i); });
+  b.addEventListener("focus", () => b.select());
+});
+function fill(digits, from) {
+  const all = boxes(); let j = from;
+  if (digits.length >= 6) j = 0;
+  for (const ch of digits.slice(0, 6 - j)) { all[j++].value = ch; }
+  (all[Math.min(j, 5)]).focus();
+  if (codeVal().length === 6) verify();
+}
+
+function drawGoogle() { PAI.renderButton($("gbtn"), { lang, onSignedIn: done, onError: (m) => { if (!$("gbtn").textContent.includes(m)) showErr(m); } }); }
+setLang(lang, false);
+PAI.load().then((st) => { if (st.user) return done(); drawGoogle(); });
+if (!matchMedia("(pointer:coarse)").matches) $("email").focus({ preventScroll: true });
+</script>
+<script src="/langpick.js" defer></script>
+</body>
+</html>

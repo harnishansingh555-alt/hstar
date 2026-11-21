@@ -1,0 +1,12 @@
+/* hstar: clean warm theme (cream, ink, terracotta). Loaded last. */
+:root,:root[data-theme="light"]{--a1:#C96442;--a1d:#B5573A;--a1l:#D97757;--a1-rgb:201,100,66;--a2:#F2BE1A;--a2-rgb:242,190,26;--ink:#1F1E1D;--ink-2:#141413;--paper:#FFFFFF;--mist:#F0EEE6;--line:#E6E3D8;--muted:#6B6A64;--bg:#FAF9F5;--side:#F0EEE6;--field:var(--a1);--field-2:var(--a1l);--leaf:var(--a1);--leaf-2:var(--a1d);--code:#1F1E1D;--shadow:0 6px 24px rgba(31,30,29,.08);color-scheme:light}
+html,body{background:#FAF9F5;color:var(--ink)}
+.cta,.loginbtn{background:var(--a1);color:#fff;border:0}.cta:hover,.loginbtn:hover{background:var(--a1d)}
+.newchat:hover{background:var(--a1);color:#fff;box-shadow:none}
+.ci.on{background:rgba(var(--a1-rgb),.14)}
+#greet .hello{background:none;-webkit-text-fill-color:var(--ink);color:var(--ink)}
+.wlogo{width:44px;height:44px;margin:0 0 18px;animation:wfade .7s ease both}
+@keyframes wfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+img[src="/logo.svg"],.brand img,.wlogo,.card img.logo{border-radius:50%}
+.wlogo{width:52px;height:52px}
