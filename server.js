@@ -906,7 +906,7 @@ app.post("/api/chat", async (req, res) => {
 
 
 // ---------- Human-like voice (Gemini speech). The browser falls back to its own voice if this fails. ----------
-const TTS_MODELS = [process.env.TTS_MODEL, "gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"].filter(Boolean);
+const TTS_MODELS = [process.env.TTS_MODEL, "gemini-2.5-flash-preview-tts"].filter(Boolean); // only the fast model: a slow voice is worse than the browser voice
 const TTS_VOICE = (process.env.TTS_VOICE || "Kore").trim(); // Kore, Puck, Aoede, Charon, Leda, Zephyr ...
 const ttsCache = new Map(); // small memory cache so a repeated sentence plays at once
 function pcmToWav(pcm, rate = 24000) {
@@ -920,16 +920,16 @@ app.post("/api/tts", async (req, res) => {
   const who = needUser(req, res);
   if (!who) return;
   if (!KEYS.gemini) return res.status(501).json({ error: "No Gemini key for voice." });
-  const text = String(req.body?.text || "").replace(/\s+/g, " ").trim().slice(0, 500);
+  const text = String(req.body?.text || "").replace(/\s+/g, " ").trim().slice(0, 300);
   if (!text) return res.status(400).json({ error: "No text." });
   const ck = text;
   if (ttsCache.has(ck)) { res.set("Content-Type", "audio/wav"); return res.send(ttsCache.get(ck)); }
   for (const model of TTS_MODELS) {
     try {
-      const { r, data } = await geminiCall(model, {
+      const { r, data } = await Promise.race([geminiCall(model, {
         contents: [{ parts: [{ text: "Say this in a warm, natural, conversational human voice, with a relaxed pace: " + text }] }],
         generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: TTS_VOICE } } } },
-      }, KEYS.gemini);
+      }, KEYS.gemini), new Promise((_, no) => setTimeout(() => no(new Error("voice too slow")), 6000))]);
       const b64 = data?.candidates?.[0]?.content?.parts?.find((p) => p.inlineData)?.inlineData?.data;
       if (!r.ok || !b64) { console.error("TTS", model, r.status, String(data?.error?.message || "").slice(0, 150)); continue; }
       const wav = pcmToWav(Buffer.from(b64, "base64"));
