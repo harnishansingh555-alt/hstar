@@ -189,7 +189,6 @@ Social media: if anyone asks for hstar's social media, links, Instagram, YouTube
 - Facebook: https://www.facebook.com/share/1HcnskCjgV/?mibextid=wwXIfr
 - WhatsApp: https://wa.me/919417439901
 Never invent or guess any other link or handle.
-Speed: the chat shows, under every answer, how fast it was (seconds to the first word, total seconds, words per second). If someone asks about your speed, tell them to look at that line under the answer, and do not make up numbers.
 
 How to answer well:
 - Lead with the answer or the most useful point in the first sentence. No filler openers such as "Great question!" and no restating the question.
@@ -904,6 +903,44 @@ app.post("/api/chat", async (req, res) => {
   res.json({ reply: out.reply });
 });
 
+
+
+// ---------- Human-like voice (Gemini speech). The browser falls back to its own voice if this fails. ----------
+const TTS_MODELS = [process.env.TTS_MODEL, "gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"].filter(Boolean);
+const TTS_VOICE = (process.env.TTS_VOICE || "Kore").trim(); // Kore, Puck, Aoede, Charon, Leda, Zephyr ...
+const ttsCache = new Map(); // small memory cache so a repeated sentence plays at once
+function pcmToWav(pcm, rate = 24000) {
+  const h = Buffer.alloc(44);
+  h.write("RIFF", 0); h.writeUInt32LE(36 + pcm.length, 4); h.write("WAVEfmt ", 8); h.writeUInt32LE(16, 16);
+  h.writeUInt16LE(1, 20); h.writeUInt16LE(1, 22); h.writeUInt32LE(rate, 24); h.writeUInt32LE(rate * 2, 28);
+  h.writeUInt16LE(2, 32); h.writeUInt16LE(16, 34); h.write("data", 36); h.writeUInt32LE(pcm.length, 40);
+  return Buffer.concat([h, pcm]);
+}
+app.post("/api/tts", async (req, res) => {
+  const who = needUser(req, res);
+  if (!who) return;
+  if (!KEYS.gemini) return res.status(501).json({ error: "No Gemini key for voice." });
+  const text = String(req.body?.text || "").replace(/\s+/g, " ").trim().slice(0, 500);
+  if (!text) return res.status(400).json({ error: "No text." });
+  const ck = text;
+  if (ttsCache.has(ck)) { res.set("Content-Type", "audio/wav"); return res.send(ttsCache.get(ck)); }
+  for (const model of TTS_MODELS) {
+    try {
+      const { r, data } = await geminiCall(model, {
+        contents: [{ parts: [{ text: "Say this in a warm, natural, conversational human voice, with a relaxed pace: " + text }] }],
+        generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: TTS_VOICE } } } },
+      }, KEYS.gemini);
+      const b64 = data?.candidates?.[0]?.content?.parts?.find((p) => p.inlineData)?.inlineData?.data;
+      if (!r.ok || !b64) { console.error("TTS", model, r.status, String(data?.error?.message || "").slice(0, 150)); continue; }
+      const wav = pcmToWav(Buffer.from(b64, "base64"));
+      if (ttsCache.size > 100) ttsCache.delete(ttsCache.keys().next().value);
+      ttsCache.set(ck, wav);
+      res.set("Content-Type", "audio/wav");
+      return res.send(wav);
+    } catch (e) { console.error("TTS error", e.message); }
+  }
+  res.status(502).json({ error: "Voice is not available right now." });
+});
 
 // ---------- Image generation: AI Horde (free) ----------
 const HORDE_KEY = KEYS.horde || "0000000000"; // anonymous key if HORDE_API_KEY is not set (slower queue)
