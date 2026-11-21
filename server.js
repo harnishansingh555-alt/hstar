@@ -148,6 +148,7 @@ app.use(express.static("public", {
   setHeaders(res, file) {
     if (/\.(png|jpg|svg|ico|woff2?)$/.test(file)) res.setHeader("Cache-Control", "public, max-age=604800");
     else if (/sw\.js$/.test(file) || /\.html$/.test(file)) res.setHeader("Cache-Control", "no-cache");
+    else if (/\.(css|js|json)$/.test(file)) res.setHeader("Cache-Control", "no-cache"); // always check for the newest, so updates show at once
     else res.setHeader("Cache-Control", "public, max-age=600");
   },
 }));
@@ -431,7 +432,8 @@ async function askAI(messages, system, opts = {}) {
 // Words are sent to the browser as soon as the AI writes them, instead of waiting for the whole answer.
 // The server also remembers which model/address works and which provider is down, so it never wastes time retrying dead ones.
 const memo = { geminiFast: undefined, groqModel: "", geminiModel: "", geminiVertex: null };
-const FIRST_WORD_MS = Number(process.env.FIRST_WORD_MS) || 7000; // give up on a provider that is silent this long
+const FIRST_WORD_MS = Number(process.env.FIRST_WORD_MS) || 5000; // the first AI must show its first word within 5 seconds
+const NEXT_WORD_MS = Number(process.env.NEXT_WORD_MS) || 2000; // every backup AI after it gets only 2 seconds
 const cooldown = {}; // provider -> time until which it is skipped
 const cool = (p, ms = 60_000) => { cooldown[p] = Date.now() + ms; };
 
@@ -581,7 +583,7 @@ async function askAIStream(messages, system, opts, onDelta, signal) {
     const ac = new AbortController();
     const onAbort = () => ac.abort();
     signal?.addEventListener("abort", onAbort, { once: true });
-    const wait = p === "horde" ? 0 : FIRST_WORD_MS;
+    const wait = p === "horde" ? 0 : order.indexOf(p) === 0 ? FIRST_WORD_MS : NEXT_WORD_MS;
     if (wait && order.length > 1 && p !== order[order.length - 1]) timer = setTimeout(() => { timedOut = true; ac.abort(); }, wait);
     try {
       const out = await STREAM[p](messages, system, KEYS[p], (t) => { if (timer) { clearTimeout(timer); timer = null; } sent += t.length; onDelta(t); }, ac.signal, opts.short ? 220 : undefined);
