@@ -10,3 +10,24 @@ html,body{background:#FAF9F5;color:var(--ink)}
 
 img[src="/logo.svg"],.brand img,.wlogo,.card img.logo{border-radius:50%}
 .wlogo{width:52px;height:52px}
+
+/* ---- dark theme (same on login, chat, profile) ---- */
+:root[data-theme="dark"]{--ink:#F2EFE8;--ink-2:#FFFFFF;--paper:#242120;--mist:#2D2926;--line:#3A3531;--muted:#AAA59B;--bg:#1A1715;--side:#141210;--code:#0F0D0C;--shadow:0 6px 24px rgba(0,0,0,.5);color-scheme:dark}
+:root[data-theme="dark"] html,:root[data-theme="dark"] body,html[data-theme="dark"] body{background:#1A1715;color:var(--ink)}
+:root[data-theme="dark"] .msg.err{background:#3A1D1A;color:#FFB4A9}
+:root[data-theme="light"] .msg.err{background:#FBE9E7;color:#8A1C10}
+:root[data-theme="dark"] .msg a{color:var(--a1l)}
+:root[data-theme="light"] .msg a{color:var(--a1d)}
+:root[data-theme="dark"] .lang{background:var(--paper)}
+:root[data-theme="dark"] .lang button[aria-pressed="true"]{background:var(--a1);color:#fff}
+:root[data-theme="dark"] .newchat:hover,:root[data-theme="dark"] .cta:hover{color:#fff}
+/* theme button */
+.thmbtn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;display:inline-grid;place-items:center;padding:0;transition:background .15s,transform .15s}
+.thmbtn:hover{background:var(--mist);transform:rotate(14deg)}
+.thmbtn svg{width:20px;height:20px}
+.bar .thmbtn{border:0;background:transparent;margin-left:auto}
+.bar .thmbtn+.gearlink{margin-left:0}
+.top{align-items:center;gap:10px}
+/* speed note under an answer */
+.spd{margin-left:auto;align-self:center;font-size:.78rem;color:var(--muted);padding:0 8px;white-space:nowrap}
+:root[data-theme="dark"] .gmsg{color:#FFB4A9}

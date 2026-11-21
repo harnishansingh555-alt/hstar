@@ -18,7 +18,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>hstar</title>
 <meta name="theme-color" content="#FAF9F5">
-<script>document.documentElement.dataset.theme="light"</script>
+<script src="/theme-toggle.js"></script>
+<script src="/theme-color.js"></script>
 <meta property="og:image" content="https://hstar.chat/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -42,7 +43,6 @@
 <link rel="stylesheet" href="style.css">
 <style>
 :root{--field:#F2BE1A;--ink:#1F2A30;--leaf:#1E5B47;--leaf-2:#2A7A60;--paper:#fff;--mist:#F0F2EE;--line:#E2E6DF;--bg:#fff;--side:#F5F6F2;--muted:#5F6B72;--code:#0F1A20;--shadow:0 6px 24px rgba(19,32,42,.10)}
-:root[data-theme="light"]{--ink:#E8EDEA;--paper:#151D23;--mist:#1E2A31;--line:#2A3740;--bg:#0F1519;--side:#0B1114;--muted:#9AA7AD;--code:#0A1013;--shadow:0 6px 24px rgba(0,0,0,.5)}
 *{box-sizing:border-box}html,body{height:100%;margin:0}
 body{font-family:"Bricolage Grotesque","Noto Sans Gurmukhi",system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:16.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit}
@@ -66,7 +66,7 @@ button{font:inherit;color:inherit}
 .userbox .info{min-width:0;flex:1}.nm,.em{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nm{font-weight:700;font-size:.95rem}.em{font-size:.78rem;color:var(--muted)}
 .linkbtn{background:none;border:0;padding:0;color:var(--leaf-2);font-weight:700;font-size:.82rem;cursor:pointer;text-decoration:underline}
-:root[data-theme="light"] .linkbtn{color:var(--field)}
+
 .srow{display:flex;gap:8px;align-items:center;justify-content:space-between}
 .lang{border-color:var(--line);background:transparent}.lang button{color:var(--ink)}
 .lang button[aria-pressed="true"]{background:var(--field);color:#13202A}
@@ -103,13 +103,12 @@ a.iconbtn{text-decoration:none}.iconbtn.gearlink:hover{background:var(--mist)}.g
 .msg.bot{white-space:normal;padding:3px 0 0;font-size:1.02rem;line-height:1.75}
 .msg.note{color:var(--muted);font-size:.92rem;padding:4px 0}
 .msg.err{background:#FBE9E7;color:#8A1C10;border-radius:14px;padding:10px 14px;align-self:flex-start}
-:root[data-theme="light"] .msg.err{background:#3A1D1A;color:#FFB4A9}
 .msg.bot>:first-child{margin-top:0}.msg.bot>:last-child{margin-bottom:0}
 .msg p{margin:.55em 0}
 .msg h2,.msg h3,.msg h4{margin:1.1em 0 .4em;line-height:1.3;font-weight:800}
 .msg h2{font-size:1.3rem}.msg h3{font-size:1.12rem}.msg h4{font-size:1rem}
 .msg ul,.msg ol{margin:.5em 0;padding-left:1.5em}.msg li{margin:.25em 0}.msg li>ul,.msg li>ol{margin:.2em 0}
-.msg a{color:var(--leaf-2);text-underline-offset:2px}:root[data-theme="light"] .msg a{color:#6FD1AE}
+.msg a{color:var(--leaf-2);text-underline-offset:2px}
 .msg hr{border:0;border-top:1px solid var(--line);margin:1.2em 0}
 .msg blockquote{margin:.7em 0;padding:.1em 0 .1em 14px;border-left:3px solid var(--field);color:var(--muted)}
 .msg code{background:rgba(127,127,127,.18);padding:1px 6px;border-radius:6px;font:.88em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
@@ -826,6 +825,7 @@ async function respond(opts = {}, undo = () => {}) {
   busy = true; setBusy(true);
   stick = true;
   const wait = typingIndicator();
+  const t0 = performance.now(); let tFirst = 0;
   const ctl = (abortCtl = new AbortController());
   let bubble = null, full = "", raf = 0;
   const paint = () => { raf = 0; if (bubble) { bubble.innerHTML = renderMd(full); bubble._text = full; toBottom(); } };
@@ -858,6 +858,7 @@ async function respond(opts = {}, undo = () => {}) {
           if (ev.error) failed = ev.error;
           if (ev.d) {
             full += ev.d;
+            if (!tFirst) tFirst = performance.now();
             if (!bubble) { wait.remove(); bubble = add("", "bot", { stream: true }); }
             if (!raf) raf = requestAnimationFrame(paint);
           }
@@ -865,7 +866,18 @@ async function respond(opts = {}, undo = () => {}) {
       }
       if (raf) cancelAnimationFrame(raf);
       wait.remove();
-      if (bubble) { paint(); finishBot(bubble); }
+      if (bubble) {
+        paint(); finishBot(bubble);
+        // Speed of this answer: time to first word, total time, words per second.
+        const tEnd = performance.now(), sec = (tEnd - t0) / 1000, words = full.trim().split(/\s+/).length;
+        const gen = Math.max((tEnd - (tFirst || t0)) / 1000, 0.05);
+        const acts = bubble.parentNode && bubble.parentNode.querySelector(".acts");
+        if (acts && !opts.live) {
+          const sp = document.createElement("span"); sp.className = "spd";
+          sp.textContent = "\u26A1 " + ((tFirst - t0) / 1000).toFixed(1) + "s first word \u00B7 " + sec.toFixed(1) + "s total \u00B7 " + (words / gen).toFixed(0) + " words/s";
+          sp.title = "AI speed"; acts.appendChild(sp);
+        }
+      }
       if (!full.trim()) throw new Error(failed || "Request failed");
     }
     history.push({ role: "assistant", content: full });

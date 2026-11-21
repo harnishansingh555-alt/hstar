@@ -1,8 +1,7 @@
 /* hstar animated theme. Never changes sign in, links or data; it only adds the look and motion. */
 (function () {
   var d = document, root = d.documentElement;
-  root.dataset.theme = "light";
-  root.classList.add("js");
+    root.classList.add("js");
   var RM = false, OFF = false;
   try { RM = matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
   try { OFF = localStorage.getItem("paiAnim") === "off"; } catch (e) {}
