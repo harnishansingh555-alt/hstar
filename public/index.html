@@ -696,42 +696,50 @@ function speakable(t) {
   return String(t).replace(/```[\s\S]*?```/g, " ").replace(/[`*_#>]/g, "").replace(/^\s*[-•]\s+/gm, "").replace(/\s+/g, " ").trim();
 }
 // ---- Speaking: a natural human voice from the server first; the browser's own voice is the backup. ----
-const SP = { token: 0, audio: null, on: false, serverOk: true };
+const SP = { token: 0, audio: null, on: false, slowUntil: 0 };
 function stopSpeak() {
   SP.token++; SP.on = false;
   if (SP.audio) { try { SP.audio.pause(); } catch (e) {} SP.audio = null; }
   if (canSpeak) speechSynthesis.cancel();
 }
 const isSpeaking = () => SP.on || (canSpeak && speechSynthesis.speaking);
+// Small pieces: the first one is a single short sentence, so the voice starts quickly.
 function splitForVoice(clean) {
+  const parts = clean.match(/[^.!?\u0964]+[.!?\u0964]*\s*/g) || [clean];
   const chunks = [];
-  for (const piece of clean.match(/[^.!?\u0964]+[.!?\u0964]*\s*/g) || [clean]) {
-    if (chunks.length && chunks[chunks.length - 1].length + piece.length < 240) chunks[chunks.length - 1] += piece;
+  for (const piece of parts) {
+    const lim = chunks.length === 0 ? 110 : 220;
+    if (chunks.length && chunks[chunks.length - 1].length + piece.length < lim && chunks.length > 1) chunks[chunks.length - 1] += piece;
     else chunks.push(piece);
   }
   return chunks;
 }
-async function fetchVoice(text) {
-  const r = await fetch("api/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
-  if (!r.ok) throw new Error("tts " + r.status);
-  return URL.createObjectURL(await r.blob());
+async function fetchVoice(text, ms) {
+  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), ms);
+  try {
+    const r = await fetch("api/tts", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+    if (!r.ok) throw new Error("tts " + r.status);
+    return URL.createObjectURL(await r.blob());
+  } finally { clearTimeout(tm); }
 }
 // Speaks the text and resolves when finished. force=true speaks even when "Voice replies" is off (live mode).
+// Natural server voice if it answers within 3 seconds; otherwise the browser voice speaks at once (and the server voice rests for 5 minutes).
 async function say(text, force = false) {
   if (!speakOn && !force) return;
   stopSpeak();
   const clean = speakable(text);
   if (!clean) return;
   const my = SP.token;
-  if (SP.serverOk) {
+  if (Date.now() > SP.slowUntil) {
     const chunks = splitForVoice(clean);
+    let done = 0;
     SP.on = true;
     try {
-      let next = fetchVoice(chunks[0]);
+      let next = fetchVoice(chunks[0], 3000);
       for (let i = 0; i < chunks.length; i++) {
         const url = await next;
         if (my !== SP.token) { URL.revokeObjectURL(url); return; }
-        next = i + 1 < chunks.length ? fetchVoice(chunks[i + 1]) : null; // get the next piece while this one plays
+        next = i + 1 < chunks.length ? fetchVoice(chunks[i + 1], 6000) : null; // fetch the next piece while this one plays
         if (next) next.catch(() => {});
         await new Promise((ok, bad) => {
           const a = new Audio(url); SP.audio = a;
@@ -739,6 +747,7 @@ async function say(text, force = false) {
           a.play().catch(bad);
         });
         URL.revokeObjectURL(url);
+        done = i + 1;
         if (my !== SP.token) return;
       }
       if (my === SP.token) SP.on = false;
@@ -746,7 +755,9 @@ async function say(text, force = false) {
     } catch (e) {
       if (my !== SP.token) return;
       SP.on = false;
-      if (/tts 5(01|02)|tts 4/.test(String(e.message))) SP.serverOk = false; // no voice on the server: use the browser voice from now on
+      SP.slowUntil = Date.now() + 5 * 60_000;
+      const rest = splitForVoice(clean).slice(done).join(" ").trim(); // the browser voice carries on from where the natural voice stopped
+      return browserSay(rest || clean, my);
     }
   }
   return browserSay(clean, my);
