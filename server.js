@@ -131,9 +131,11 @@ app.use(express.json({ limit: "12mb" }));
 // The home page "/" is the real home page for everyone (Google needs real content there, or it reports Soft 404).
 // The login page lives at /login. Set LOGIN_FIRST=true only if you want signed-out visitors to land on the login page.
 // The home page "/" is index.html, which is the chat page. It shows a sign-in box by itself when the visitor is signed out.
+// Signed-in visitors get the chat. Signed-out visitors (and Google) get the sign-in/home page on "/" itself, with no redirect,
+// so Google always finds the real home page with the site name and icon.
 app.get("/", (req, res) => {
   res.setHeader("Cache-Control", "no-cache");
-  res.sendFile(path.join(process.cwd(), "public", "index.html"));
+  res.sendFile(path.join(process.cwd(), "public", readSession(req) ? "index.html" : "login.html"));
 });
 // The public API may be called from other websites (it is protected by the API key).
 app.use("/api/v1", (req, res, next) => {
