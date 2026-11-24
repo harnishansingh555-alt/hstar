@@ -2,14 +2,15 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
+<meta name="application-name" content="hstar">
 <meta property="og:site_name" content="hstar">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>hstar | Free multilingual chat in 140+ languages, image maker, free API key</title>
-<meta name="description" content="hstar is a free AI chatbot that talks in 140+ languages. Create images from text and get a free API key for your own website or app.">
+<title>hstar | Free multilingual AI chatbot</title>
+<meta name="description" content="hstar is a free AI chatbot that talks in many languages. Create images from text and get a free API key for your own website or app.">
 <meta name="theme-color" content="#FAF9F5">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"hstar","alternateName":["hstar Chatbot","hstar AI"],"url":"https://hstar.chat/"}</script>
-<meta property="og:title" content="hstar | Free multilingual chat in 140+ languages, image maker, free API key">
-<meta property="og:description" content="hstar is a free AI chatbot that talks in 140+ languages. Create images from text and get a free API key for your own website or app.">
+<meta property="og:title" content="hstar | Free multilingual AI chatbot">
+<meta property="og:description" content="hstar is a free AI chatbot that talks in many languages. Create images from text and get a free API key for your own website or app.">
 <link rel="canonical" href="https://hstar.chat/">
 <meta property="og:image" content="https://hstar.chat/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -20,7 +21,6 @@
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" type="image/png" href="/favicon-48.png" sizes="48x48">
 <link rel="icon" type="image/png" href="/favicon-96.png" sizes="96x96">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" sizes="any">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,16 +31,25 @@
 <style>
 html,body{background:var(--bg)!important;color:var(--ink)}
 body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative;overflow-x:hidden;font-family:"Bricolage Grotesque","Noto Sans Gurmukhi","Noto Sans Devanagari",system-ui,-apple-system,"Segoe UI",sans-serif}
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(60vmax 40vmax at 15% 0%,rgba(var(--a1-rgb),.16),transparent 60%),radial-gradient(50vmax 40vmax at 90% 100%,rgba(var(--a2-rgb),.12),transparent 60%)}
-body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;background-image:radial-gradient(var(--ink) 1px,transparent 1px);background-size:22px 22px}
+.orb{position:fixed;border-radius:50%;filter:blur(60px);opacity:.7;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+.o1{width:min(380px,60vw);height:min(380px,60vw);background:rgb(var(--a1-rgb));opacity:.42;left:8%;top:8%;animation:oa 11s ease-in-out infinite alternate}
+.o2{width:min(320px,55vw);height:min(320px,55vw);background:#C9B8F0;right:8%;top:14%;animation:ob 13s ease-in-out infinite alternate}
+.o3{width:min(340px,58vw);height:min(340px,58vw);background:#A8DCC4;left:28%;bottom:2%;animation:oc 15s ease-in-out infinite alternate}
+.o4{width:min(220px,40vw);height:min(220px,40vw);background:rgb(var(--a2-rgb));opacity:.5;right:22%;bottom:8%;animation:oa 12s ease-in-out infinite alternate-reverse}
+@keyframes oa{to{transform:translate(110px,50px) scale(1.2)}}@keyframes ob{to{transform:translate(-120px,80px) scale(.85)}}@keyframes oc{to{transform:translate(140px,-60px) scale(1.15)}}
+:root[data-theme="dark"] .orb{mix-blend-mode:screen;opacity:.22}
+.wd{position:fixed;font-weight:600;color:var(--muted);opacity:0;pointer-events:none;z-index:0;animation:wup 9s linear infinite}
+@keyframes wup{0%{opacity:0;transform:translateY(40px)}15%,70%{opacity:.75}100%{opacity:0;transform:translateY(-200px)}}
+.typed{margin:14px 0 0;min-height:2.7em;font-size:1.35rem;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.typed i{display:inline-block;width:3px;height:1.2em;background:var(--a1);margin-left:3px;animation:cur 1s steps(1) infinite}@keyframes cur{50%{opacity:0}}
 .top,.wrap,.pagelinks,.aboutline{position:relative;z-index:1}
 .top{display:flex;justify-content:flex-end;padding:16px clamp(16px,4vw,36px)}
 .wrap{flex:1;display:grid;place-items:center;width:100%;padding:8px 16px 28px}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow);padding:clamp(26px,5vw,44px);width:100%;max-width:440px;position:relative;overflow:hidden;text-align:center;animation:rise .6s ease both}
+.card{background:color-mix(in srgb,var(--paper) 78%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow);padding:clamp(26px,5vw,44px);width:100%;max-width:440px;position:relative;overflow:hidden;text-align:center;animation:rise .6s ease both}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .card::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--a1),var(--a2))}
 .card img.logo{width:58px;height:58px;border-radius:50%;box-shadow:0 6px 18px rgba(var(--a1-rgb),.3)}
-h1{margin:14px 0 6px;font-size:1.6rem;line-height:1.2;letter-spacing:-.015em}
+h1{margin:6px 0 6px;font-size:1.15rem!important;font-weight:600;color:var(--muted);font-size:1.6rem;line-height:1.2;letter-spacing:-.015em}
 .sub{margin:0 0 20px;color:var(--muted);font-size:.98rem}
 label{display:block;text-align:left;font-weight:600;font-size:.9rem;margin:0 0 6px}
 input.f{width:100%;font:inherit;font-size:1rem;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);transition:border-color .15s,box-shadow .15s}
@@ -75,13 +84,15 @@ input.f.bad{border-color:#C0392B;box-shadow:0 0 0 4px rgba(192,57,43,.12)}
 .pagelinks{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 18px;padding:0 16px 8px}.pagelinks a{color:var(--muted);font-weight:600;font-size:.95rem;text-decoration:none;padding:10px 4px}.pagelinks a:hover{color:var(--ink);text-decoration:underline}
 .aboutline{max-width:520px;margin:0 auto;padding:0 20px calc(26px + env(safe-area-inset-bottom));text-align:center;color:var(--muted);font-size:.9rem}
 :root[data-theme="dark"] .err{background:#3A1D1A;color:#FFB4A9}:root[data-theme="dark"] .ok{background:#16322A;color:#8FE0C0}
-@media (prefers-reduced-motion:reduce){.card{animation:none}}
+@media (prefers-reduced-motion:reduce){.card,.orb,.wd,.typed i{animation:none}.wd{display:none}}
 </style>
 <link rel="stylesheet" href="/responsive.css">
 <link rel="stylesheet" href="/theme.css?v=3">
 <script src="/theme.js?v=3"></script>
 </head>
 <body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="orb o4"></div>
+<span class="wd" style="left:10%;bottom:18%;animation-delay:0s">नमस्ते</span><span class="wd" style="left:82%;bottom:22%;animation-delay:2s">Hola</span><span class="wd" style="left:18%;bottom:8%;animation-delay:4s">ਸਤ ਸ੍ਰੀ ਅਕਾਲ</span><span class="wd" style="left:74%;bottom:10%;animation-delay:6s">Bonjour</span><span class="wd" style="left:5%;bottom:42%;animation-delay:7s">வணக்கம்</span><span class="wd" style="left:88%;bottom:46%;animation-delay:1s">مرحبا</span>
 <div class="top">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" data-lang="en" aria-pressed="true">English</button>
@@ -92,6 +103,7 @@ input.f.bad{border-color:#C0392B;box-shadow:0 0 0 4px rgba(192,57,43,.12)}
 <div class="wrap">
   <main class="card">
     <img class="logo" src="/logo.svg?v=2" alt="hstar">
+    <p class="typed" aria-hidden="true"><span id="typed"></span><i></i></p>
     <h1 data-t="title">Sign in to hstar</h1>
     <p class="sub" data-t="sub">Use Google, or get a 6-digit code on your email. No password needed.</p>
 
@@ -263,5 +275,11 @@ PAI.load().then((st) => { if (st.user) return done(); drawGoogle(); });
 if (!matchMedia("(pointer:coarse)").matches) $("email").focus({ preventScroll: true });
 </script>
 <script src="/langpick.js" defer></script>
+<script>
+(function(){const L=["Namaste, how can I help?","\u0A38\u0A24 \u0A38\u0A4D\u0A30\u0A40 \u0A05\u0A15\u0A3E\u0A32, \u0A26\u0A71\u0A38\u0A4B \u0A15\u0A40 \u0A2A\u0A41\u0A71\u0A1B\u0A23\u0A3E?","Hello! Ask me anything.","\u0928\u092E\u0938\u094D\u0924\u0947, \u092A\u0942\u091B\u093F\u090F \u0915\u0941\u091B \u092D\u0940"];
+const el=document.getElementById("typed");if(!el)return;
+if(matchMedia("(prefers-reduced-motion:reduce)").matches){el.textContent=L[2];return}
+let i=0,j=0,d=1;setInterval(()=>{if(d){el.textContent=L[i].slice(0,++j);if(j>=L[i].length){d=0;j=L[i].length+22}}else{if(j>L[i].length){j--;return}el.textContent=L[i].slice(0,--j);if(j<=0){d=1;i=(i+1)%L.length}}},70)})();
+</script>
 </body>
 </html>
