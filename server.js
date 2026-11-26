@@ -122,6 +122,14 @@ const cookieFlags = (req, maxAge) =>
 try { const { default: compression } = await import("compression"); app.use(compression({ filter: (req, res) => !String(res.getHeader("content-type") || "").includes("text/event-stream") && compression.filter(req, res) })); } catch {}
 app.disable("x-powered-by");
 app.set("trust proxy", 1); // Render sits behind a proxy, so this gives each visitor their own IP
+// Only the start page "/" may appear in Google. Every other page (about, privacy, /login, ...) is told "noindex",
+// so Google shows one single result for hstar.chat. The pages themselves still work for visitors.
+app.use((req, res, next) => {
+  const p = req.path;
+  const isPage = p !== "/" && (/\.html$/i.test(p) || !/\.[a-z0-9]+$/i.test(p)) && !p.startsWith("/api/");
+  if (isPage) res.setHeader("X-Robots-Tag", "noindex, follow");
+  next();
+});
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -907,10 +915,59 @@ app.post("/api/chat", async (req, res) => {
 
 
 
-// ---------- Human-like voice (Gemini speech). The browser falls back to its own voice if this fails. ----------
-const TTS_MODELS = [process.env.TTS_MODEL, "gemini-2.5-flash-preview-tts"].filter(Boolean); // only the fast model: a slow voice is worse than the browser voice
-const TTS_VOICE = (process.env.TTS_VOICE || "Kore").trim(); // Kore, Puck, Aoede, Charon, Leda, Zephyr ...
-const ttsCache = new Map(); // small memory cache so a repeated sentence plays at once
+// ---------- Human-like voice ----------
+// 1) Microsoft Edge neural voices (free, no key, about half a second). Needs: npm install (package "msedge-tts").
+// 2) Gemini speech as a backup (needs the Gemini key, slower).  3) The browser's own voice (the page falls back to it).
+let edge = null;
+try { edge = await import("msedge-tts"); } catch { console.log("Voice: msedge-tts is not installed. Run npm install to get the free fast voice."); }
+const TTS_GENDER = (process.env.TTS_GENDER || "Female").trim(); // Female or Male
+const TTS_MODELS = [process.env.TTS_MODEL, "gemini-2.5-flash-preview-tts"].filter(Boolean);
+const TTS_VOICE = (process.env.TTS_VOICE || "Kore").trim(); // Gemini voice name
+const ttsCache = new Map();
+let edgeVoices = null;
+async function getEdgeVoices() {
+  if (edgeVoices) return edgeVoices;
+  try { edgeVoices = await new edge.MsEdgeTTS().getVoices(); } catch (e) { console.error("TTS voices", e.message); edgeVoices = []; }
+  return edgeVoices;
+}
+const SCRIPTS = [[/[\u0A00-\u0A7F]/, "pa-IN"], [/[\u0900-\u097F]/, "hi-IN"], [/[\u0980-\u09FF]/, "bn-IN"], [/[\u0A80-\u0AFF]/, "gu-IN"], [/[\u0B80-\u0BFF]/, "ta-IN"], [/[\u0C00-\u0C7F]/, "te-IN"], [/[\u0C80-\u0CFF]/, "kn-IN"], [/[\u0D00-\u0D7F]/, "ml-IN"], [/[\u0600-\u06FF]/, "ar-SA"], [/[\u3040-\u30FF]/, "ja-JP"], [/[\uAC00-\uD7AF]/, "ko-KR"], [/[\u4E00-\u9FFF]/, "zh-CN"], [/[\u0400-\u04FF]/, "ru-RU"]];
+async function pickEdgeVoice(text, lang) {
+  const l = String(lang || "en-IN");
+  let loc = null;
+  for (const [re, c] of SCRIPTS) if (re.test(text)) { loc = c; break; }
+  if (loc === "hi-IN" && /^mr/i.test(l)) loc = "mr-IN";
+  if (loc === "ar-SA" && /^ur/i.test(l)) loc = "ur-IN";
+  if (!loc) loc = /^en/i.test(l) ? "en-IN" : l;
+  const all = await getEdgeVoices();
+  const pool = (f) => all.filter(f);
+  const lc = (v) => String(v.Locale || "").toLowerCase();
+  const gen = (arr) => arr.find((v) => v.Gender === TTS_GENDER) || arr[0];
+  const v = gen(pool((v) => lc(v) === loc.toLowerCase())) || gen(pool((v) => lc(v).startsWith(loc.slice(0, 2).toLowerCase())));
+  return v?.ShortName || "en-IN-NeerjaNeural";
+}
+async function edgeSpeak(text, lang) {
+  const voice = await pickEdgeVoice(text, lang);
+  const key = voice + "|" + text;
+  if (ttsCache.has(key)) return ttsCache.get(key);
+  const tts = new edge.MsEdgeTTS();
+  const mp3 = edge.OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3;
+  const fmt = mp3 || edge.OUTPUT_FORMAT.WEBM_24KHZ_16BIT_MONO_OPUS;
+  try {
+    await tts.setMetadata(voice, fmt);
+    const { audioStream } = tts.toStream(text);
+    const buf = await new Promise((ok, bad) => {
+      const parts = [];
+      const timer = setTimeout(() => bad(new Error("voice too slow")), 6000);
+      audioStream.on("data", (d) => parts.push(d));
+      audioStream.on("error", (e) => { clearTimeout(timer); bad(e); });
+      audioStream.on("close", () => { clearTimeout(timer); parts.length ? ok(Buffer.concat(parts)) : bad(new Error("empty voice")); });
+    });
+    const out = { buf, type: mp3 ? "audio/mpeg" : "audio/webm" };
+    if (ttsCache.size > 150) ttsCache.delete(ttsCache.keys().next().value);
+    ttsCache.set(key, out);
+    return out;
+  } finally { try { tts.close(); } catch {} }
+}
 function pcmToWav(pcm, rate = 24000) {
   const h = Buffer.alloc(44);
   h.write("RIFF", 0); h.writeUInt32LE(36 + pcm.length, 4); h.write("WAVEfmt ", 8); h.writeUInt32LE(16, 16);
@@ -918,14 +975,7 @@ function pcmToWav(pcm, rate = 24000) {
   h.writeUInt16LE(2, 32); h.writeUInt16LE(16, 34); h.write("data", 36); h.writeUInt32LE(pcm.length, 40);
   return Buffer.concat([h, pcm]);
 }
-app.post("/api/tts", async (req, res) => {
-  const who = needUser(req, res);
-  if (!who) return;
-  if (!KEYS.gemini) return res.status(501).json({ error: "No Gemini key for voice." });
-  const text = String(req.body?.text || "").replace(/\s+/g, " ").trim().slice(0, 300);
-  if (!text) return res.status(400).json({ error: "No text." });
-  const ck = text;
-  if (ttsCache.has(ck)) { res.set("Content-Type", "audio/wav"); return res.send(ttsCache.get(ck)); }
+async function geminiSpeak(text) {
   for (const model of TTS_MODELS) {
     try {
       const { r, data } = await Promise.race([geminiCall(model, {
@@ -934,14 +984,22 @@ app.post("/api/tts", async (req, res) => {
       }, KEYS.gemini), new Promise((_, no) => setTimeout(() => no(new Error("voice too slow")), 6000))]);
       const b64 = data?.candidates?.[0]?.content?.parts?.find((p) => p.inlineData)?.inlineData?.data;
       if (!r.ok || !b64) { console.error("TTS", model, r.status, String(data?.error?.message || "").slice(0, 150)); continue; }
-      const wav = pcmToWav(Buffer.from(b64, "base64"));
-      if (ttsCache.size > 100) ttsCache.delete(ttsCache.keys().next().value);
-      ttsCache.set(ck, wav);
-      res.set("Content-Type", "audio/wav");
-      return res.send(wav);
+      return { buf: pcmToWav(Buffer.from(b64, "base64")), type: "audio/wav" };
     } catch (e) { console.error("TTS error", e.message); }
   }
-  res.status(502).json({ error: "Voice is not available right now." });
+  return null;
+}
+app.post("/api/tts", async (req, res) => {
+  const who = needUser(req, res);
+  if (!who) return;
+  const text = String(req.body?.text || "").replace(/\s+/g, " ").trim().slice(0, 400);
+  if (!text) return res.status(400).json({ error: "No text." });
+  let out = null;
+  if (edge) { try { out = await edgeSpeak(text, req.body?.lang); } catch (e) { console.error("Edge voice:", e.message); } }
+  if (!out && KEYS.gemini) out = await geminiSpeak(text);
+  if (!out) return res.status(502).json({ error: "Voice is not available right now." });
+  res.set("Content-Type", out.type);
+  res.send(out.buf);
 });
 
 // ---------- Image generation: AI Horde (free) ----------
