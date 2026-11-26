@@ -2,22 +2,22 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="application-name" content="hstar">
-<meta property="og:site_name" content="hstar">
+<meta name="application-name" content="HSTAR">
+<meta property="og:site_name" content="HSTAR">
 <meta name="description" content="hstar is a free AI chatbot that talks in many languages. Create images from text and get a free API key for your own website or app.">
-<meta property="og:title" content="hstar | Free multilingual AI chatbot">
+<meta property="og:title" content="HSTAR | Free multilingual AI chatbot">
 <meta property="og:description" content="hstar is a free AI chatbot that talks in many languages. Create images from text and get a free API key for your own website or app.">
 <meta property="og:image" content="https://hstar.chat/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://hstar.chat/og-image.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"hstar","alternateName":["hstar Chatbot","hstar AI"],"url":"https://hstar.chat/"}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"hstar","url":"https://hstar.chat/","logo":"https://hstar.chat/icons/icon-512.png"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"HSTAR","alternateName":["hstar","Hstar"],"url":"https://hstar.chat/"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"HSTAR","url":"https://hstar.chat/","logo":"https://hstar.chat/icons/icon-512.png"}</script>
 <link rel="canonical" href="https://hstar.chat/">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>hstar | Free multilingual AI chatbot</title>
+<title>HSTAR | Free multilingual AI chatbot</title>
 <meta name="theme-color" content="#FAF9F5">
 <script src="/theme-toggle.js?v=3"></script>
 <script src="/theme-color.js"></script>
@@ -25,6 +25,7 @@
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" type="image/png" href="/favicon-48.png" sizes="48x48">
 <link rel="icon" type="image/png" href="/favicon-96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -248,6 +249,14 @@ a.iconbtn{text-decoration:none}.iconbtn.gearlink:hover{background:var(--mist)}.g
         <button role="menuitem" type="button" id="pmOut"></button>
         <div class="pm-sep"></div>
         <a role="menuitem" href="api-key.html" id="pmKey"></a>
+        <div class="pm-sep"></div>
+        <a role="menuitem" href="help.html" id="pm_help"></a>
+        <a role="menuitem" href="features.html" id="pm_features"></a>
+        <a role="menuitem" href="faq.html" id="pm_faq"></a>
+        <a role="menuitem" href="about.html" id="pm_about"></a>
+        <a role="menuitem" href="contact.html" id="pm_contact"></a>
+        <a role="menuitem" href="privacy.html" id="pm_privacy"></a>
+        <a role="menuitem" href="terms.html" id="pm_terms"></a>
       </div>
       <button class="userbox" id="userbox" type="button" aria-haspopup="menu" aria-expanded="false" hidden></button>
     </div>
@@ -619,8 +628,8 @@ function renderUser() {
   if (!user) { box.hidden = true; menu.hidden = true; return; }
   box.hidden = false;
   const L = lang === "pa"
-    ? { profile: "ਪ੍ਰੋਫ਼ਾਈਲ ਅਤੇ ਸੈਟਿੰਗਾਂ", lang: "ਭਾਸ਼ਾ", out: "ਸਾਈਨ ਆਊਟ", key: "API ਕੁੰਜੀ" }
-    : { profile: "Profile & settings", lang: "Language", out: "Sign out", key: "API key" };
+    ? { profile: "ਪ੍ਰੋਫ਼ਾਈਲ ਅਤੇ ਸੈਟਿੰਗਾਂ", lang: "ਭਾਸ਼ਾ", out: "ਸਾਈਨ ਆਊਟ", key: "API ਕੁੰਜੀ", help: "ਕਿਵੇਂ ਵਰਤੀਏ",features: "ਖ਼ੂਬੀਆਂ",faq: "ਅਕਸਰ ਪੁੱਛੇ ਸਵਾਲ",about: "ਸਾਡੇ ਬਾਰੇ",contact: "ਸੰਪਰਕ",privacy: "ਪ੍ਰਾਈਵੇਸੀ ਨੀਤੀ",terms: "ਸ਼ਰਤਾਂ" }
+    : { profile: "Profile & settings", lang: "Language", out: "Sign out", key: "API key", help: "How to use",features: "Features",faq: "FAQ",about: "About",contact: "Contact",privacy: "Privacy policy",terms: "Terms" };
   const info = document.createElement("div"); info.className = "info";
   const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = user.name;
   const em = document.createElement("div"); em.className = "em"; em.textContent = user.email;
@@ -629,6 +638,7 @@ function renderUser() {
   $("pmName").textContent = user.name; $("pmEmail").textContent = user.email;
   $("pmProfile").textContent = L.profile; $("pmLang").textContent = L.lang;
   $("pmOut").textContent = L.out; $("pmKey").textContent = L.key;
+  for (const k of ["help","features","faq","about","contact","privacy","terms"]) $("pm_" + k).textContent = L[k];
 }
 (function () {
   const box = $("userbox"), menu = $("pmenu");
@@ -689,71 +699,89 @@ function speakable(t) {
   return String(t).replace(/```[\s\S]*?```/g, " ").replace(/[`*_#>]/g, "").replace(/^\s*[-•]\s+/gm, "").replace(/\s+/g, " ").trim();
 }
 // ---- Speaking: a natural human voice from the server first; the browser's own voice is the backup. ----
-const SP = { token: 0, audio: null, on: false, slowUntil: 0 };
+const SP = { token: 0, on: false, slowUntil: 0, cancelPlay: null };
+// One audio element, unlocked by the first tap or key press, so the browser always lets the voice play.
+const voiceEl = new Audio();
+voiceEl.preload = "auto";
+(function () {
+  const SILENT = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+  const unlock = () => {
+    removeEventListener("pointerdown", unlock, true); removeEventListener("keydown", unlock, true);
+    try { voiceEl.src = SILENT; const p = voiceEl.play(); if (p) p.catch(() => {}); } catch (e) {}
+  };
+  addEventListener("pointerdown", unlock, true); addEventListener("keydown", unlock, true);
+})();
 function stopSpeak() {
   SP.token++; SP.on = false;
-  if (SP.audio) { try { SP.audio.pause(); } catch (e) {} SP.audio = null; }
+  try { voiceEl.pause(); } catch (e) {}
+  if (SP.cancelPlay) { const c = SP.cancelPlay; SP.cancelPlay = null; c(); }
   if (canSpeak) speechSynthesis.cancel();
 }
 const isSpeaking = () => SP.on || (canSpeak && speechSynthesis.speaking);
-// Small pieces: the first one is a single short sentence, so the voice starts quickly.
-function splitForVoice(clean) {
-  const parts = clean.match(/[^.!?\u0964]+[.!?\u0964]*\s*/g) || [clean];
-  const chunks = [];
-  for (const piece of parts) {
-    const lim = chunks.length === 0 ? 110 : 220;
-    if (chunks.length && chunks[chunks.length - 1].length + piece.length < lim && chunks.length > 1) chunks[chunks.length - 1] += piece;
-    else chunks.push(piece);
-  }
-  return chunks;
-}
 async function fetchVoice(text, ms) {
   const ac = new AbortController(), tm = setTimeout(() => ac.abort(), ms);
   try {
-    const r = await fetch("api/tts", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+    const r = await fetch("api/tts", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text, lang: PAI.speechLang() }) });
     if (!r.ok) throw new Error("tts " + r.status);
     return URL.createObjectURL(await r.blob());
   } finally { clearTimeout(tm); }
 }
-// Speaks the text and resolves when finished. force=true speaks even when "Voice replies" is off (live mode).
-// Natural server voice if it answers within 3 seconds; otherwise the browser voice speaks at once (and the server voice rests for 5 minutes).
-async function say(text, force = false) {
-  if (!speakOn && !force) return;
+function playUrl(url) {
+  return new Promise((ok, bad) => {
+    SP.cancelPlay = ok;
+    voiceEl.onended = ok; voiceEl.onerror = () => bad(new Error("play"));
+    voiceEl.src = url;
+    voiceEl.play().catch(bad);
+  });
+}
+// A speaker starts talking as soon as the first sentence is ready, while the rest of the answer is still being written.
+function makeSpeaker() {
   stopSpeak();
-  const clean = speakable(text);
-  if (!clean) return;
-  const my = SP.token;
-  if (Date.now() > SP.slowUntil) {
-    const chunks = splitForVoice(clean);
-    let done = 0;
-    SP.on = true;
-    try {
-      let next = fetchVoice(chunks[0], 3000);
-      for (let i = 0; i < chunks.length; i++) {
-        const url = await next;
-        if (my !== SP.token) { URL.revokeObjectURL(url); return; }
-        next = i + 1 < chunks.length ? fetchVoice(chunks[i + 1], 6000) : null; // fetch the next piece while this one plays
-        if (next) next.catch(() => {});
-        await new Promise((ok, bad) => {
-          const a = new Audio(url); SP.audio = a;
-          a.onended = ok; a.onerror = () => bad(new Error("play"));
-          a.play().catch(bad);
-        });
-        URL.revokeObjectURL(url);
-        done = i + 1;
-        if (my !== SP.token) return;
-      }
-      if (my === SP.token) SP.on = false;
-      return;
-    } catch (e) {
-      if (my !== SP.token) return;
-      SP.on = false;
-      SP.slowUntil = Date.now() + 5 * 60_000;
-      const rest = splitForVoice(clean).slice(done).join(" ").trim(); // the browser voice carries on from where the natural voice stopped
-      return browserSay(rest || clean, my);
-    }
+  const my = SP.token; SP.on = true;
+  let buf = "", sent = 0, ended = false, playing = false;
+  const q = []; let finish; const done = new Promise((r) => (finish = r));
+  const alive = () => my === SP.token;
+  function enqueue(t) {
+    const text = speakable(t); if (!text) return;
+    const it = { text, p: Date.now() > SP.slowUntil ? fetchVoice(text, sent ? 7000 : 4500) : Promise.reject(new Error("rest")) };
+    it.p.catch(() => {});
+    sent++; q.push(it); pump();
   }
-  return browserSay(clean, my);
+  async function pump() {
+    if (playing) return; playing = true;
+    while (q.length && alive()) {
+      const it = q.shift(); let url = null;
+      try { url = await it.p; } catch (e) { if (!/rest/.test(e.message)) SP.slowUntil = Date.now() + 60000; }
+      if (!alive()) { if (url) URL.revokeObjectURL(url); break; }
+      if (url) { try { await playUrl(url); } catch (e) { if (alive()) await browserSay(it.text, my); } URL.revokeObjectURL(url); }
+      else await browserSay(it.text, my);
+    }
+    playing = false;
+    if (!alive()) finish(); else if (ended && !q.length) { SP.on = false; finish(); }
+  }
+  function flush(last) {
+    for (;;) {
+      const min = sent ? 60 : 24;
+      const re = last ? /[.!?\u0964\n]+(\s|$)/g : /[.!?\u0964\n]+\s/g;
+      re.lastIndex = Math.min(min, buf.length);
+      const m = re.exec(buf);
+      if (m) { const cut = m.index + m[0].length; enqueue(buf.slice(0, cut)); buf = buf.slice(cut); continue; }
+      if (buf.length > 200) { const sp = buf.lastIndexOf(" ", 200); const cut = sp > 40 ? sp : 200; enqueue(buf.slice(0, cut)); buf = buf.slice(cut); continue; }
+      break;
+    }
+    if (last && buf.trim()) { enqueue(buf); buf = ""; }
+  }
+  return {
+    push(d) { if (alive()) { buf += d; flush(false); } },
+    end() { ended = true; if (alive()) flush(true); if (!playing && !q.length) { if (alive()) SP.on = false; finish(); } return done; },
+  };
+}
+// Speaks a whole text. force=true speaks even when "Voice replies" is off (live mode and the speaker button).
+function say(text, force = false) {
+  if (!speakOn && !force) return Promise.resolve();
+  const sp = makeSpeaker();
+  sp.push(String(text));
+  return sp.end();
 }
 function browserSay(clean, my) {
   return new Promise((resolve) => {
@@ -883,6 +911,8 @@ async function respond(opts = {}, undo = () => {}) {
   const wait = typingIndicator();
   const ctl = (abortCtl = new AbortController());
   let bubble = null, full = "", raf = 0;
+  let streamed = false;
+  const speaker = speakOn && !opts.live ? makeSpeaker() : null; // starts talking with the first sentence
   const paint = () => { raf = 0; if (bubble) { bubble.innerHTML = renderMd(full); bubble._text = full; toBottom(); } };
   try {
     const k = (() => { let k = -1; history.forEach((m, i) => { if (m.att) k = i; }); return k; })();
@@ -899,6 +929,7 @@ async function respond(opts = {}, undo = () => {}) {
       full = data.reply; finishBot(add(full, "bot"));
     } else {
       // Words arrive as they are written, so the first words show up in a moment.
+      streamed = true;
       const reader = res.body.getReader(), dec = new TextDecoder();
       let buf = "", failed = null;
       for (;;) {
@@ -912,7 +943,7 @@ async function respond(opts = {}, undo = () => {}) {
           let ev; try { ev = JSON.parse(line.slice(5)); } catch { continue; }
           if (ev.error) failed = ev.error;
           if (ev.d) {
-            full += ev.d;
+            full += ev.d; if (speaker) speaker.push(ev.d);
             if (!bubble) { wait.remove(); bubble = add("", "bot", { stream: true }); }
             if (!raf) raf = requestAnimationFrame(paint);
           }
@@ -925,11 +956,12 @@ async function respond(opts = {}, undo = () => {}) {
     }
     history.push({ role: "assistant", content: full });
     saveChat(); markLast();
-    if (!opts.live) say(full);
+    if (speaker) { if (streamed) speaker.end(); else { speaker.push(full); speaker.end(); } } else if (!opts.live) say(full);
     return full;
   } catch (e) {
     if (raf) cancelAnimationFrame(raf);
     wait.remove();
+    if (speaker) { if (full.trim()) speaker.end(); else stopSpeak(); }
     if (bubble && full.trim()) { // keep what already arrived (also after Stop)
       paint(); finishBot(bubble);
       history.push({ role: "assistant", content: full }); saveChat(); markLast(); return full;

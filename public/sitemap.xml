@@ -1,12 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://hstar.chat/</loc></url>
-<url><loc>https://hstar.chat/features.html</loc></url>
-<url><loc>https://hstar.chat/help.html</loc></url>
-<url><loc>https://hstar.chat/about.html</loc></url>
-<url><loc>https://hstar.chat/faq.html</loc></url>
-<url><loc>https://hstar.chat/contact.html</loc></url>
-<url><loc>https://hstar.chat/privacy.html</loc></url>
-<url><loc>https://hstar.chat/terms.html</loc></url>
-<url><loc>https://hstar.chat/image.html</loc></url>
-<url><loc>https://hstar.chat/live.html</loc></url>
+<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<url><loc>https://hstar.chat/</loc><image:image><image:loc>https://hstar.chat/og-image.png</image:loc><image:title>HSTAR</image:title></image:image><image:image><image:loc>https://hstar.chat/icons/icon-512.png</image:loc><image:title>HSTAR logo</image:title></image:image></url>
 </urlset>
