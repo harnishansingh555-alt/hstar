@@ -8,4 +8,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://hstar.chat/sitemap.xml
-Sitemap: https://hstar.chat/sitemap-removed.xml
