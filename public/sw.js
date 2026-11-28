@@ -1,6 +1,6 @@
 // hstar service worker: makes the site installable and keeps the app shell available offline.
 // Chat and sign-in requests (/api/*) always go to the network and are never cached.
-const CACHE = "hstar-v22";
+const CACHE = "hstar-v23";
 const SHELL = ["/", "/login.html", "/api-key.html", "/profile.html", "/features.html", "/help.html", "/about.html", "/faq.html", "/contact.html", "/privacy.html", "/image.html", "/about-images.html", "/live.html", "/terms.html", "/404.html", "/pages.css", "/responsive.css", "/theme.css", "/theme.js", "/theme-toggle.js", "/theme-color.js", "/pages.js", "/style.css", "/auth.js", "/langpick.js", "/langs.json", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {
