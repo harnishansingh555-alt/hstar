@@ -122,14 +122,6 @@ const cookieFlags = (req, maxAge) =>
 try { const { default: compression } = await import("compression"); app.use(compression({ filter: (req, res) => !String(res.getHeader("content-type") || "").includes("text/event-stream") && compression.filter(req, res) })); } catch {}
 app.disable("x-powered-by");
 app.set("trust proxy", 1); // Render sits behind a proxy, so this gives each visitor their own IP
-// Only the start page "/" may appear in Google. Every other page (about, privacy, /login, ...) is told "noindex",
-// so Google shows one single result for hstar.chat. The pages themselves still work for visitors.
-app.use((req, res, next) => {
-  const p = req.path;
-  const isPage = p !== "/" && (/\.html$/i.test(p) || !/\.[a-z0-9]+$/i.test(p)) && !p.startsWith("/api/");
-  if (isPage) res.setHeader("X-Robots-Tag", "noindex, follow");
-  next();
-});
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
